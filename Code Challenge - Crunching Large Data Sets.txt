@@ -1,0 +1,25 @@
+SweetSpot Code Challenge -- Crunching Large Data Sets
+-----------------------------------------------------
+
+When working with large data sets at SweetSpot, we often do not have the luxury of being able to make large calculations from scratch.  Instead, we need to be able to perform calculations incrementally as data is added to the system.  The following optimization problem explores this idea...
+
+The included Ruby code sample calculates the Interquartile Mean of a large data set incrementally.  The data.txt file contains 100,000 integer values between 0 and 600.  The given code calculates the Interquartile Mean of the first 4 values in the data set, then the first 5 values, then the first 6 values, etc, until it has calculated the IQM of all 100,000 values (99997 IQM calculations total).
+
+The code provided is slow.  On a modern MacBook Pro it takes over 10 minutes to execute.
+
+Can you optimize this code such that:
+
+1) The same output is produced for the given data.txt input as the example code produces AND
+2) It will continue to produce correct output given any data set with any number of integer values between 0 and 600
+
+You may write your solution in any language of your choice, but the performance improvement should come from a reduction in algorithmic complexity, not merely language/compiler efficiencies.
+
+Please provide the optimized code, a test that proves that your code works, and answers to the following questions:
+
+1) Explain how your optimization works and why you took this approach
+
+2) Would your approach continue to work if there were millions or billions of input values?
+
+3) Would your approach still be efficient if you needed to store the intermediate state between each IQM calculation in a data store?  If not, how would you change it to meet this requirement?
+
+OPTIONAL EXTRA CHALLENGE: Turn this into a simple web application.  Present a field where an integer value between 0 and 600 can be inputted and display to the user the IQM calculation of all the values that have been so far entered, allowing the user to continue to enter numbers while seeing the IQM being recomputed.  Use your incremental IQM calculation so that this web application could scale to calculate the IQM on large numbers of input values.  Persist the intermediate state of your IQM calculation so that this web application would continue to work if data were being entered simultaneously from multiple servers.
