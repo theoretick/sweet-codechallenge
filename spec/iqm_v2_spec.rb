@@ -1,14 +1,14 @@
-require_relative '../iqm_v2.rb'
+require_relative '../incremental_insert_iqm.rb'
 require 'rspec'
 
-describe 'incremental interquartile mean take_2' do
+describe 'incremental_insert_iqm' do
 
-  # it 'should calculate identical data as v1' do
-  #   expect(iqm_v2()).to eq('100000: 458.82') # FULL 100k version
-  # end
+  it 'should calculate identical data to v1 incremental IQM using 100k dataset' do
+    expect(incremental_insert_iqm()).to eq('100000: 458.82') # FULL 100k version
+  end
 
-  it 'should calculate identical data to short-set' do
-    expect(iqm_v2('data-short.txt')).to eq('10000: 357.13') # 10k version
+  it 'should calculate identical data to v1 incremental IQM using 10k dataset' do
+    expect(incremental_insert_iqm('data-short.txt')).to eq('10000: 357.13')
   end
 
 end
