@@ -1,5 +1,5 @@
 #!/usr/bin/ruby
-# require 'profile'
+# require 'profile' # TEMP:
 
 def iqm_v2(filename='data.txt')
 
@@ -9,31 +9,48 @@ def iqm_v2(filename='data.txt')
 
       # init values only once
       check_num = line.to_i
-      data << check_num
+
+      if data.empty?
+        data << check_num
+      else
+        insert_index = insert_sort(data, check_num)
+        data.insert(insert_index, check_num)
+      end
+
       data_length = data.length
 
       if data_length >= 4
-
         quartile = data_length / 4.0
-        ys = data.sort[quartile.ceil-1..(3*quartile).floor]
 
-        # if check_num falls within interquartile, compute total_mean
-        #
-        # manual checking is quicker than an expensive include? operation
-        # if ys.include?(check_num)
-        if check_num >= ys.at(0) && check_num <= ys.at(-1)
-          factor = quartile - (ys.length/2.0 - 1)
-          mean = (ys[1...-1].inject(0, :+) + (ys[0] + ys[-1]) * factor) / (2*quartile)
-          total_mean = "#{data_length}: #{"%.2f" % mean}"
-        end
+        ys = data[quartile.ceil-1..(3*quartile).floor]
 
+        # if (and only if) check_num falls within IQ, recompute total_mean
+        # if check_num >= quartile_2 && check_num <= quartile_3
+        # if ys.include? check_num
+          factor     = quartile - (ys.length/2.0 - 1)
+          @mean       = (ys[1...-1].inject(0, :+) + (ys[0] + ys[-1]) * factor) / (2*quartile)
+          total_mean = "#{data_length}: #{"%.2f" % @mean}"
+        # end
       end
       puts total_mean
     end
-    # return total_mean
+    puts @mean.inspect
+    return @mean
   end
 
 end
+
+# returns index of data to be inserted
+def insert_sort(data, check_num)
+  data.each_with_index do |data_point, index|
+    if data_point > check_num
+      return index
+    else
+      return -1
+    end
+  end
+end
+
 
 # iqm_v2('data-short.txt')
 iqm_v2('data.txt')

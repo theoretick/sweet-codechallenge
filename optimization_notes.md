@@ -1,16 +1,4 @@
-Replace @file.each_line with single read + @array.each
-  nearly identical speed
 
-Tried different interpreters
-  jruby much slower
-  rubinius about the same as MRI
-
-
-
-
-Replaced multi-use method calls with single assignment initialization (data.length)
-
-Replaced array[] with array.at() which is supposedly mildly more performant (Ruby Cookbook, p.149)
 
 Added a by-pass to prevent unnecessary mean calc if number falls outside of
 the interquartile distribution.
@@ -23,7 +11,22 @@ Running profiler showed the most expensive methods to be
 
 #-----
 
-  Please provide the optimized code, a test that proves that your code works, and answers to the following questions:
+
+OPTIONAL EXTRA CHALLENGE: Turn this into a simple web application.  Present a field where an integer value between 0 and 600 can be inputted and display to the user the IQM calculation of all the values that have been so far entered, allowing the user to continue to enter numbers while seeing the IQM being recomputed.  Use your incremental IQM calculation so that this web application could scale to calculate the IQM on large numbers of input values.  Persist the intermediate state of your IQM calculation so that this web application would continue to work if data were being entered simultaneously from multiple servers.
+
+
+web app
+input field for integer (0..600)
+display IQM calc for all values so far entered
+enter numbers to see IQM recomputed
+persist intermediate state of IQM calculations
+  (to support simultaneous entry from diff points)
+
+
+
+
+#-----
+
 
 
 
@@ -37,7 +40,7 @@ Running profiler showed the most expensive methods to be
   I made the webapp too, its up on heroku over here: !!!!!!!!!!!!!!!
 
   Original runtime of the v1 code on my Macbook was ```real  10m30.413s```.
-  After my optimizations I got it down to ``` ```.
+  After my optimizations I got it down to ```real 8m0.800s```, ~25% faster.
 
 1) Explain how your optimization works and why you took this approach
 
@@ -53,13 +56,14 @@ Running profiler showed the most expensive methods to be
   ended up evaluating "data[0] <= check_num <= data[-1]" (pseudocode).
   This change also saved about 10% in runtime.
 
-  Many secondary optimizations I made were to initialize some of the commonly
-  used variables in the beginning of the #each_line block so they are only
-  calculated once, such as data.length.  I also replaced Array.index references
-  (i.e. foo[0]) with the #at method (i.e. foo.at(0)) which is supposedly
-  slightly faster ("Ruby Cookbook", p.149).  I noticed no noticeable increase
-  with these two changes, however it may appear with significantly larger
-  datasets.
+  A couple secondary optimizations I made were to initialize some of the
+  commonly used variables in the beginning of the #each_line block so they
+  are only calculated once, such as data.length.  I also replaced index
+  references (i.e. foo[0]) with the #at method (i.e. foo.at(0)) which is
+  supposedly slightly faster ("Ruby Cookbook", p.149).  I noticed no
+  noticeable increase with these two changes, however it may appear with
+  significantly larger datasets. For readability sake, I reverted back from
+  #at.
 
 2) Would your approach continue to work if there were millions or billions of input values?
 
@@ -70,7 +74,7 @@ Running profiler showed the most expensive methods to be
 
 3) Would your approach still be efficient if you needed to store the intermediate state between each IQM calculation in a data store?  If not, how would you change it to meet this requirement?
 
-  Yes, by writing to the store only if the mean requires updating, I avoided
+  Yes, by writing to the store only if the mean requires updating I avoided
   the need for spurious writes of the same number to a persistent data store.
   At the intermediate state the last computed value would be held in storage
   and remain accessible until it is updated.
