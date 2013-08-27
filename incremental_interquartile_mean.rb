@@ -1,6 +1,6 @@
 #!/usr/bin/ruby
 data = []
-File.open('data.txt','r') do |f|
+File.open('data-short.txt','r') do |f|
   f.each_line do |l|
     data << l.to_i
     if data.length >= 4
