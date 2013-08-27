@@ -28,20 +28,23 @@ persist intermediate state of IQM calculations
   I made the webapp too, its up on heroku over here: !!!!!!!!!!!!!!!
 
   Original runtime of the v1 code on my Macbook was ```real  10m30.413s```.
-  After my optimizations I got it down to ```real 7m25.126s```, ~30% faster.
+  After my optimizations I got it down to ```real 6m9.464s```, ~40% faster.
 
 
 1) Explain how your optimization works and why you took this approach
 
   The main approach I took during optimization involved modifying the
   sorting algorithm used.  I ran profiler and took a look at the most
-  expensive operations, of which #sort was included. Ruby's built-in sort
-  is a generic implementation of a quicksort which, while often efficient,
-  is extremely slow when acting on a nearly-sorted list. The v1 code is
-  continuously using the expensive #sort method with only single additions
-  to the end of a sorted set.  Instead, by using an insert_sort it prevents
-  such an expensive operation.  By writing one it cut computation down
-  dramatically.
+  expensive operations, of which Array#sort was near the top. Ruby's #sort
+  is an implementation of a quicksort which is extremely slow when acting
+  on a nearly-sorted list. The v1 code is continuously using the expensive
+  #sort method with only single additions to the end of a sorted set.
+  Instead, by using an insert_sort it prevents such an expensive operation.
+  By writing one it cut computation down dramatically. I then added a shortcut
+  to the #insert_sort method to check if check_num is greater than half.
+  This can potentially save significant time and once added took another
+  minute off the runtime (```real 7m25.126s``` down to ```real  6m9.464s```).
+  By adding quarter checks as well it would likely increase it even more.
 
   A couple secondary optimizations I made were to initialize some of the
   commonly used variables in the beginning of the #each_line block so they
@@ -63,5 +66,4 @@ persist intermediate state of IQM calculations
   Yes, my approach would still remain efficient as the intermediate state
   of the last computed value would be held in storage and remain accessible
   until it is updated.
-
 
